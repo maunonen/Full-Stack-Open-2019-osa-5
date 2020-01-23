@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 
 const App = (props) => {
 
@@ -10,9 +11,28 @@ const App = (props) => {
   const [ user, setUser] = useState( null )
   const [ errorMessage, setErrorMessage ] = useState( null )
   const [ blogs, setBlogs] = useState( null) 
+  const [ author, setAuthor] = useState()
+  const [ url, setUrl] = useState('')
+  const [ title, setTitle] = useState('')
+  
+  
   
   useEffect( () => {
-    async function getBlogs () {
+    getBlogs()
+  }, [  ])
+  
+  useEffect( ()=> {
+    const loggedUserJson = window.localStorage.getItem('loggedBlogAppUser')
+    if ( loggedUserJson){
+      const user = JSON.parse(loggedUserJson)
+      setUser(user) 
+      setAuthor( user.username)
+      blogService.setToken( user.token)
+      //getBlogs()
+    }
+  }, [])
+
+  const getBlogs = async  () => {
       try {
         const blogs = await blogService.getAll()
         if (blogs) {
@@ -25,16 +45,6 @@ const App = (props) => {
         }, 5000)
       }
     }
-    getBlogs()
-  }, [])
-  useEffect( ()=> {
-    const loggedUserJson = window.localStorage.getItem('loggedBlogAppUser')
-    if ( loggedUserJson){
-      const user = JSON.parse(loggedUserJson)
-      setUser(user) 
-      blogService.setToken( user.token)
-    }
-  })
 
   const handleLogin = async ( event) => {
     event.preventDefault()
@@ -66,9 +76,28 @@ const App = (props) => {
     setUser( null )
     setUsername('') 
     setPassword('')
-    //setBlogs(null)
+    
   }
 
+  const handleAddBlog = async ( event ) => {
+    event.preventDefault()
+    try {
+      const blog = await blogService.createBlog( { 
+        title, url, author
+      })
+      setUrl('')
+      setTitle('')
+      getBlogs()
+    } catch ( error ){
+      console.log('Error', error)
+      setErrorMessage('Can not create blog')
+      setTimeout(() => {
+        setErrorMessage( null )
+      }, 5000)
+    }
+  }
+
+  
 
   const blogList = () => (
     <div>
@@ -116,7 +145,17 @@ const App = (props) => {
           : <div>
               <h1>BLOGS</h1>
               <p>{ user.name } is logged in</p>
-              <button onClick={ handleLogOut }>Log out</button>
+              
+              <button onClick ={ handleLogOut }>Log out</button>
+              <BlogForm 
+                handleAddBlog = { handleAddBlog } 
+                title = { title }
+                author = { author } 
+                url= { url } 
+                setAuthor = { setAuthor } 
+                setTitle = { setTitle } 
+                setUrl = { setUrl }
+              /> 
               { blogList()}
             </div>
       }
