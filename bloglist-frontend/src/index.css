@@ -1,0 +1,19 @@
+ .error {
+   border: solid 4px red;
+   border-radius: 8px;
+   font-size: 2rem;
+   color: red; 
+   padding: 10px;
+   margin: 10px 0px; 
+   background: rgb(202, 202, 202)
+ } 
+
+ .successful {
+  border: solid 4px green;
+  border-radius: 8px;
+  font-size: 2rem;
+  color: green; 
+  padding: 10px;
+  margin: 10px 0px; 
+  background: rgb(202, 202, 202)
+} 
