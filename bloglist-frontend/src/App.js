@@ -18,7 +18,7 @@ const App = (props) => {
   
   useEffect( () => {
     getBlogs()
-  }, [  ])
+  }, [ ])
   
   useEffect( ()=> {
     const loggedUserJson = window.localStorage.getItem('loggedBlogAppUser')
@@ -27,7 +27,6 @@ const App = (props) => {
       setUser(user) 
       setAuthor( user.username)
       blogService.setToken( user.token)
-      //getBlogs()
     }
   }, [])
 
@@ -55,13 +54,23 @@ const App = (props) => {
           setBlogs( blogs)
         }
       } catch ( err ) {
-        setNotificationMessage({ 
-          type : 'error', 
-          message : '404 not found`'
-        })
-        setTimeout( () => {
-          setNotificationMessage( null )
-        }, 5000)
+        if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          // Object not found checck status code 
+          if ( err.response.status && err.response.status === 404){
+            showMessage('error', 'Can not get blogs from server', 5000 )
+          } 
+          else {
+            console.log('Error', err)
+            showMessage('error', 'Something went wrong', 5000 )
+          }
+        } else if (err.request) {
+          showMessage('error', 'Connection to server lost', 5000 )
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          showMessage('error', 'Wrong request setting', 5000)
+        }
       }
     }
 
@@ -80,7 +89,27 @@ const App = (props) => {
       setPassword('')
       showMessage('successful', 'You have been successfuly loged in', 5000 )  
     } catch ( err ){
-      showMessage('error', 'Wrong credentials', 5000 )      
+      // handle Login error 
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // Object not found chech status code 
+      if ( err.response.status){
+          if (err.response.status === 400){
+            showMessage( 'error', `${ err.response.data.error}`, 5000 )
+          } else if ( err.response.status === 401) {
+            showMessage( 'error', `${ err.response.data.error}`, 5000 )
+          } 
+          else {
+            showMessage('error', `Something went wrong ${ err.response.status}`, 5000 )
+          }
+        }
+      } else if (err.request) {
+        showMessage('error', 'Connection to server lost', 5000)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        showMessage('error', 'Wrong request setting', 5000 )
+      }
     }
   }
 
@@ -105,9 +134,29 @@ const App = (props) => {
       getBlogs()
       showMessage('successful', 'New blog added', 5000 )
       
-    } catch ( error ){
-      console.log('Error', error)
-      showMessage('error', 'Can not create blog', 5000 )
+    } catch ( err ){
+      // handle add blog error 
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // Object not found chech status code 
+      if ( err.response.status){
+          if (err.response.status === 400){
+            showMessage( 'error', `${ err.response.data.error}`, 5000 )
+          } else if ( err.response.status === 401) {
+            showMessage( 'error', `${ err.response.data.error}`, 5000 )
+          } 
+          else {
+            console.log('Error', err)
+            showMessage('error', `Something went wrong ${ err.response.status}`, 5000 )
+          }
+        }
+      } else if (err.request) {
+        showMessage('error', 'Connection to server lost', 5000)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        showMessage('error', 'Wrong request setting', 5000 )
+      }
     }
   }
 
@@ -167,7 +216,6 @@ const App = (props) => {
                 title = { title }
                 author = { author } 
                 url= { url } 
-                setAuthor = { setAuthor } 
                 setTitle = { setTitle } 
                 setUrl = { setUrl }
               /> 

@@ -16,17 +16,16 @@ const getTokenFrom = request => {
 }
 
 blogsRouter.get('/', async (req, res, next) => {
-  
   try {
     const blogs = await Blog
       .find({})
       .populate('user', { username : 1, name : 1 } )
-    res.json( blogs.map( blog => blog.toJSON()))
+      res.json( blogs.map( blog => blog.toJSON()))
   } catch( err ){
     next(err)
   }
-} 
-)
+  }
+  ) 
 
 blogsRouter.post('/', middleware.auth, async (req, res, next) => {
   

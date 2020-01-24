@@ -2,7 +2,7 @@ import React from 'react'
 
 const BlogForm = ( { 
   handleAddBlog, title, setTitle, author, 
-  setAuthor, url , setUrl } ) => (
+   url , setUrl } ) => (
   
     <div>
       <h1>create new</h1>
@@ -22,7 +22,8 @@ const BlogForm = ( {
             type="text"
             value={ author }
             name="Author"
-            onChange={({ target}) => setAuthor( target.value )}
+            readOnly
+            //onChange={({ target}) => setAuthor( target.value )}
           />
         </div>
         <div>
