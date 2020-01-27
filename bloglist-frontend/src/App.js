@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Blog from './components/Blog'
+
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import BlogList from './components/BlogList'
+import Togglable from './components/Togglable'
 
 const App = (props) => {
 
@@ -15,6 +18,8 @@ const App = (props) => {
   const [ author, setAuthor] = useState()
   const [ url, setUrl] = useState('')
   const [ title, setTitle] = useState('')
+
+  const blogFormRef = React.createRef()
   
   useEffect( () => {
     getBlogs()
@@ -60,7 +65,7 @@ const App = (props) => {
           // Object not found checck status code 
           if ( err.response.status && err.response.status === 404){
             showMessage('error', 'Can not get blogs from server', 5000 )
-          } 
+          }   
           else {
             console.log('Error', err)
             showMessage('error', 'Something went wrong', 5000 )
@@ -125,6 +130,7 @@ const App = (props) => {
 
   const handleAddBlog = async ( event ) => {
     event.preventDefault()
+    blogFormRef.current.toggleVisibility()
     try {
       const blog = await blogService.createBlog( { 
         title, url, author
@@ -161,66 +167,38 @@ const App = (props) => {
   }
 
   
-
-  const blogList = () => (
-    <div>
-      <h2>blogs</h2>
-      { blogs === null
-          ? <p>404 nothing found</p>
-          : blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
-  )
   
-
-  const loginForm = () => (
-    <form onSubmit = { handleLogin }>
-      <h1>log in application</h1>
-      <div>
-        username 
-        <input 
-          type="text"
-          value={ username }
-          name="Username"
-          onChange={({ target}) => setUsername( target.value )}
-        />
-      </div>
-      <div>
-        password
-        <input 
-          type="text"
-          value={ password }
-          name="Password"
-          onChange={({ target}) => setPassword( target.value )}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
-
   return (
     <div>
-      
       <Notification notification = { notificationMessage}/>
       { 
         user === null 
-          ? loginForm() 
+          ? <LoginForm
+              password={password}
+              username={username}
+              setUsername={setUsername}
+              setPassword={setPassword}
+              handleLogin={ handleLogin}
+            />
           : <div>
+            
               <h1>BLOGS</h1>
               <p>{ user.name } is logged in</p>
-              
               <button onClick ={ handleLogOut }>Log out</button>
-              <BlogForm 
-                handleAddBlog = { handleAddBlog } 
-                title = { title }
-                author = { author } 
-                url= { url } 
-                setTitle = { setTitle } 
-                setUrl = { setUrl }
-              /> 
-              { blogList()}
-            </div>
+              <Togglable buttonLabel={'new note'} ref={blogFormRef}>
+                <BlogForm 
+                  handleAddBlog = { handleAddBlog } 
+                  title = { title }
+                  author = { author } 
+                  url= { url } 
+                  setTitle = { setTitle } 
+                  setUrl = { setUrl }
+                /> 
+              </Togglable>
+              <BlogList
+                  blogs={blogs}
+              />
+          </div>
       }
     </div>
   );

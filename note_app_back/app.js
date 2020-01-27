@@ -10,7 +10,6 @@ const mongoose = require('mongoose')
 const logger = require('./utils/logger')
 const loginRouter = require('./controllers/login')
 
-
 logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
