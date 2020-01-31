@@ -166,8 +166,6 @@ const App = (props) => {
     }
   }
 
-  
-  
   return (
     <div>
       <Notification notification = { notificationMessage}/>
