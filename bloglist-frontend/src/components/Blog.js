@@ -1,15 +1,17 @@
 import React , { useState } from 'react'
-//import Togglable from './Togglable'
 
-
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleAddLike  }) => {
 
   const [ visible, setVisible ]= useState( false )
 
   const toggleVisibility = () => {
     setVisible(!visible)
-    //console.log('Visible')
-
+  }
+  
+  const handleClick = (event) => {
+    event.stopPropagation()
+    event.preventDefault()
+    handleAddLike( blog)    
   }
   
   const blogStyle = {
@@ -25,10 +27,7 @@ const Blog = ({ blog }) => {
         <p>{blog.title}</p>
         <a style={ { display: visible ? 'block' : 'none' }} href={ blog.url}>{ blog.url}</a>
         <p style={ { display: visible ? 'block' : 'none'}}>{ blog.likes}
-          <button onClick={(event) => { 
-            event.stopPropagation()
-            console.log('Button')
-            }}
+          <button onClick={ handleClick }
             >Like</button>        
         </p>
         <p style={ { display: visible ? 'block' : 'none' }}>added by { blog.author}</p>
@@ -36,9 +35,4 @@ const Blog = ({ blog }) => {
     </div>
   )
 }
-
-
-  
-
-
 export default Blog

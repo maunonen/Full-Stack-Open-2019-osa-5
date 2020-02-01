@@ -78,6 +78,33 @@ const App = (props) => {
         }
       }
     }
+    const handleAddLike = async ( blog) => {
+    try {
+      const blogAddLike = {
+        ...blog, likes : blog.likes + 1 || 1
+      }
+      await blogService.addLike( blogAddLike, blog.id) 
+      getBlogs()
+    }catch ( err ){
+      if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          // Object not found checck status code 
+          if ( err.response.status && err.response.status === 404){
+            showMessage('error', 'Can not updaet blog', 5000 )
+          }   
+          else {
+            console.log('Error', err)
+            showMessage('error', 'Something went wrong', 5000 )
+          }
+        } else if (err.request) {
+          showMessage('error', 'Connection to server lost', 5000 )
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          showMessage('error', 'Wrong request setting', 5000)
+        }
+    }
+  }
 
   const handleLogin = async ( event) => {
     event.preventDefault()
@@ -127,6 +154,8 @@ const App = (props) => {
     setPassword('')
     showMessage('successful', 'You have been successfuly loged out', 5000 )
   }
+
+  
 
   const handleAddBlog = async ( event ) => {
     event.preventDefault()
@@ -195,6 +224,7 @@ const App = (props) => {
               </Togglable>
               <BlogList
                   blogs={blogs}
+                  handleAddLike={ handleAddLike }
               />
           </div>
       }
