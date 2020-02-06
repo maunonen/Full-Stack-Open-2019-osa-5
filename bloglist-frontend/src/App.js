@@ -7,6 +7,7 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
+import FilterBlog from './components/FilterBlog'
 
 const App = (props) => {
 
@@ -18,7 +19,7 @@ const App = (props) => {
   const [ author, setAuthor] = useState()
   const [ url, setUrl] = useState('')
   const [ title, setTitle] = useState('')
-
+  const [ sortByLike, setSortByLike ] = useState(false)
   const blogFormRef = React.createRef()
   
   useEffect( () => {
@@ -52,11 +53,21 @@ const App = (props) => {
     }, showTime)
   } 
 
+  const getSortedBlogs = () => {
+    return blogs.sort((a , b ) => { 
+      if (sortByLike){
+        return a.likes < b.likes ? 1 : -1
+      } else {
+        return a.likes > b.likes ? 1 : -1
+      }
+    } )
+  }
+
   const getBlogs = async  () => {
       try {
         const blogs = await blogService.getAll()
         if (blogs) {
-          setBlogs( blogs)
+          setBlogs( blogs )
         }
       } catch ( err ) {
         if (err.response) {
@@ -211,7 +222,12 @@ const App = (props) => {
             
               <h1>BLOGS</h1>
               <p>{ user.name } is logged in</p>
-              <button onClick ={ handleLogOut }>Log out</button>
+              <button onClick = { handleLogOut }>Log out</button>
+              <FilterBlog 
+                sortByLike = { sortByLike }
+                setSortByLike={ setSortByLike }
+                getSortedBlogs={ getSortedBlogs }
+              />
               <Togglable buttonLabel={'new note'} ref={blogFormRef}>
                 <BlogForm 
                   handleAddBlog = { handleAddBlog } 
@@ -223,7 +239,7 @@ const App = (props) => {
                 /> 
               </Togglable>
               <BlogList
-                  blogs={blogs}
+                  blogs={ blogs}
                   handleAddLike={ handleAddLike }
               />
           </div>
