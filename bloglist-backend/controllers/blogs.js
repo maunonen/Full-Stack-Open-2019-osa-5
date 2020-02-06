@@ -53,7 +53,7 @@ blogsRouter.delete('/:id', middleware.auth, async (req, res, next) => {
   try {
     // send error if params not exist
     if ( !req.params.id) {
-      return res.status(400).json({ error : 'Please provide order ID'})
+      return res.status(400).json({ error : 'Please provide blog ID'})
     }
     // Find blog from Blog collection
     const blog = await Blog.findById( { _id : req.params.id })

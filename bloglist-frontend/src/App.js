@@ -63,6 +63,39 @@ const App = (props) => {
     } )
   }
 
+  const handleRemoveBlog = async (id) => {
+
+    try {
+      const removedBlogStatus = await blogService.removeBlog(id)
+      if ( removedBlogStatus  === 200){
+        showMessage('successful', 'You have been successfuly deleted blog', 5000 )       
+      }
+      getBlogs()
+    } catch ( err) {
+      console.log(err)
+      if (err.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          // Object not found checck status code 
+        if ( err.response.status && err.response.status === 404){
+          showMessage( 'error', 'Blog not found', 5000 )
+        } else if ( err.response.status && err.response.status === 400){
+          showMessage( 'error', 'Please provide blog ID', 5000 )
+        }  else if (err.response.status && err.response.status === 403){
+          showMessage( 'error', `You don't have permission to delete this blogs`, 5000 )
+        } else if (err.response.status && err.response.status === 401){
+          showMessage( 'error', `${ err.response.data.error}`, 5000 )
+        } 
+      } 
+      else if (err.request) {
+        showMessage('error', 'Connection to server lost', 5000 )
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        showMessage('error', 'Wrong request setting', 5000)
+      }
+    }
+  }
+
   const getBlogs = async  () => {
       try {
         const blogs = await blogService.getAll()
@@ -241,6 +274,7 @@ const App = (props) => {
               <BlogList
                   blogs={ blogs}
                   handleAddLike={ handleAddLike }
+                  handleRemoveBlog={ handleRemoveBlog}
               />
           </div>
       }

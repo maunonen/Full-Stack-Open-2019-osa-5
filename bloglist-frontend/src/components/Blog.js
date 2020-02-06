@@ -1,6 +1,6 @@
 import React , { useState } from 'react'
 
-const Blog = ({ blog, handleAddLike  }) => {
+const Blog = ({ blog, handleAddLike, handleRemoveBlog  }) => {
 
   const [ visible, setVisible ]= useState( false )
 
@@ -12,6 +12,14 @@ const Blog = ({ blog, handleAddLike  }) => {
     event.stopPropagation()
     event.preventDefault()
     handleAddLike( blog)    
+  }
+  const removeBlog = (event) => {
+    event.stopPropagation()
+    event.preventDefault()
+    const aproveRemove = window.confirm(`Remove blog ${ blog.title} by ${ blog.author}`)
+    if (aproveRemove) {
+      handleRemoveBlog( event.target.value)
+    }
   }
   
   const blogStyle = {
@@ -31,6 +39,11 @@ const Blog = ({ blog, handleAddLike  }) => {
             >Like</button>        
         </p>
         <p style={ { display: visible ? 'block' : 'none' }}>added by { blog.author}</p>
+        <button 
+          style={ { display: visible ? 'block' : 'none' }}
+          value = { blog.id } 
+          onClick = { removeBlog }>Remove
+        </button>
       </div>
     </div>
   )
