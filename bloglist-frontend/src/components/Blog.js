@@ -1,6 +1,6 @@
 import React , { useState } from 'react'
 
-const Blog = ({ blog, handleAddLike, handleRemoveBlog  }) => {
+const Blog = ({ blog, handleAddLike, handleRemoveBlog, user  }) => {
 
   const [ visible, setVisible ]= useState( false )
 
@@ -40,7 +40,7 @@ const Blog = ({ blog, handleAddLike, handleRemoveBlog  }) => {
         </p>
         <p style={ { display: visible ? 'block' : 'none' }}>added by { blog.author}</p>
         <button 
-          style={ { display: visible ? 'block' : 'none' }}
+          style={ { display: visible && user.username === blog.author ? 'block' : 'none' }}
           value = { blog.id } 
           onClick = { removeBlog }>Remove
         </button>

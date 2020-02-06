@@ -31,6 +31,7 @@ const App = (props) => {
     if ( loggedUserJson){
       const user = JSON.parse(loggedUserJson)
       setUser(user) 
+      console.log('User', user)
       setAuthor( user.username)
       blogService.setToken( user.token)
     }
@@ -275,6 +276,7 @@ const App = (props) => {
                   blogs={ blogs}
                   handleAddLike={ handleAddLike }
                   handleRemoveBlog={ handleRemoveBlog}
+                  user={user}
               />
           </div>
       }

@@ -1,7 +1,7 @@
 import React from 'react'
 import Blog from '../components/Blog'
 
-const BlogList = ({ blogs, handleAddLike, handleRemoveBlog }) => {
+const BlogList = ({ blogs, handleAddLike, handleRemoveBlog, user }) => {
   
   return (
     <div>
@@ -14,6 +14,7 @@ const BlogList = ({ blogs, handleAddLike, handleRemoveBlog }) => {
                 blog={blog}
                 handleAddLike = { handleAddLike }
                 handleRemoveBlog = { handleRemoveBlog }
+                user={ user }
               />
       )}
     </div>
