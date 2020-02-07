@@ -262,6 +262,7 @@ const App = (props) => {
                 setSortByLike={ setSortByLike }
                 getSortedBlogs={ getSortedBlogs }
               />
+              
               <Togglable buttonLabel={'new note'} ref={blogFormRef}>
                 <BlogForm 
                   handleAddBlog = { handleAddBlog } 
