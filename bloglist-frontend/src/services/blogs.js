@@ -23,14 +23,13 @@ const createBlog = async ( blog) => {
 }
 
 const removeBlog = async (id) => {
-    console.log( 'Service ID BLOG', id )
-    const config = {
-      headers: { Authorization: token }
-    }
-    const request = await axios.delete(`${ baseUrl}/${ id}`, config )
-    console.log('status', request.status)
-    return request.status
-
+  console.log( 'Service ID BLOG', id )
+  const config = {
+    headers: { Authorization: token }
+  }
+  const request = await axios.delete(`${ baseUrl}/${ id}`, config )
+  console.log('status', request.status)
+  return request.status
 }
 
 const setToken = ( newToken ) => {
@@ -39,4 +38,4 @@ const setToken = ( newToken ) => {
 
 
 
-export default { getAll , setToken, createBlog, addLike, removeBlog}
+export default { getAll , setToken, createBlog, addLike, removeBlog }

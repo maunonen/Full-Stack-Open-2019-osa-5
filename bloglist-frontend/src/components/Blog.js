@@ -3,16 +3,15 @@ import PropsTypes from 'prop-types'
 
 const Blog = ({ blog, handleAddLike, handleRemoveBlog, user  }) => {
 
-  const [ visible, setVisible ]= useState( false )
+  const [ visible, setVisible ] = useState( false )
 
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-  
   const handleClick = (event) => {
     event.stopPropagation()
     event.preventDefault()
-    handleAddLike( blog)    
+    handleAddLike( blog )
   }
   const removeBlog = (event) => {
     event.stopPropagation()
@@ -22,27 +21,26 @@ const Blog = ({ blog, handleAddLike, handleRemoveBlog, user  }) => {
       handleRemoveBlog( event.target.value)
     }
   }
-  
   const blogStyle = {
-      paddingTop: 10,
-      paddingLeft: 2,
-      border: 'solid',
-      borderWidth: 1,
-      marginBottom: 5
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
   }
   return (
     <div style={ blogStyle }>
       <div onClick={ toggleVisibility }>
         <p>{blog.title}</p>
         <a style={ { display: visible ? 'block' : 'none' }} href={ blog.url}>{ blog.url}</a>
-        <p style={ { display: visible ? 'block' : 'none'}}>{ blog.likes}
+        <p style={ { display: visible ? 'block' : 'none' }}>{ blog.likes}
           <button onClick={ handleClick }
-            >Like</button>        
+          >Like</button>
         </p>
         <p style={ { display: visible ? 'block' : 'none' }}>added by { blog.author}</p>
-        <button 
+        <button
           style={ { display: visible && user.username === blog.author ? 'block' : 'none' }}
-          value = { blog.id } 
+          value = { blog.id }
           onClick = { removeBlog }>Remove
         </button>
       </div>
@@ -51,10 +49,9 @@ const Blog = ({ blog, handleAddLike, handleRemoveBlog, user  }) => {
 }
 
 Blog.PropsTypes = {
-  blog : PropsTypes.array.isRequired, 
-  handleAddLike  : PropsTypes.func.isRequired,  
-  handleRemoveBlog : PropsTypes.func.isRequired 
-  
+  blog : PropsTypes.array.isRequired,
+  handleAddLike  : PropsTypes.func.isRequired,
+  handleRemoveBlog : PropsTypes.func.isRequired
 }
 
 export default Blog

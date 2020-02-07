@@ -9,53 +9,51 @@ import BlogList from './components/BlogList'
 import Togglable from './components/Togglable'
 import FilterBlog from './components/FilterBlog'
 
-const App = (props) => {
+const App = () => {
 
   const [ username, setUsername ]= useState('')
   const [ password, setPassword ]= useState('')
   const [ user, setUser] = useState( null )
   const [ notificationMessage, setNotificationMessage ] = useState( null )
-  const [ blogs, setBlogs] = useState( null) 
+  const [ blogs, setBlogs] = useState( null )
   const [ author, setAuthor] = useState()
   const [ url, setUrl] = useState('')
   const [ title, setTitle] = useState('')
   const [ sortByLike, setSortByLike ] = useState(false)
   const blogFormRef = React.createRef()
-  
   useEffect( () => {
     getBlogs()
   }, [ ])
-  
-  useEffect( ()=> {
+  useEffect( () => {
     const loggedUserJson = window.localStorage.getItem('loggedBlogAppUser')
     if ( loggedUserJson){
       const user = JSON.parse(loggedUserJson)
-      setUser(user) 
-      console.log('User', user)
-      setAuthor( user.username)
-      blogService.setToken( user.token)
+      setUser(user)
+      console.log('User', user )
+      setAuthor( user.username )
+      blogService.setToken( user.token )
     }
   }, [])
 
   const showMessage = ( messageType, message, showTime) => {
-    if ( !(typeof messageType === 'string' || messageType instanceof String)){ 
+    if ( !( typeof messageType === 'string' || messageType instanceof String )){
       return -1
     } else if (!( typeof showTime === 'number' && showTime > 0 )){
       return -1
-    } else if ( !(['error', 'successful' ].includes( messageType))){
+    } else if ( !(['error', 'successful' ].includes( messageType ))){
       return -1
     }
-    setNotificationMessage({ 
-          type : messageType, 
-          message : message
-        })
+    setNotificationMessage({
+      type : messageType,
+      message : message
+    })
     setTimeout( () => {
       setNotificationMessage( null )
     }, showTime)
-  } 
+  }
 
   const getSortedBlogs = () => {
-    return blogs.sort((a , b ) => { 
+    return blogs.sort(( a , b ) => {
       if (sortByLike){
         return a.likes < b.likes ? 1 : -1
       } else {
@@ -69,25 +67,25 @@ const App = (props) => {
     try {
       const removedBlogStatus = await blogService.removeBlog(id)
       if ( removedBlogStatus  === 200){
-        showMessage('successful', 'You have been successfuly deleted blog', 5000 )       
+        showMessage('successful', 'You have been successfuly deleted blog', 5000 )
       }
       getBlogs()
     } catch ( err) {
       console.log(err)
       if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          // Object not found checck status code 
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // Object not found checck status code
         if ( err.response.status && err.response.status === 404){
           showMessage( 'error', 'Blog not found', 5000 )
         } else if ( err.response.status && err.response.status === 400){
           showMessage( 'error', 'Please provide blog ID', 5000 )
         }  else if (err.response.status && err.response.status === 403){
-          showMessage( 'error', `You don't have permission to delete this blogs`, 5000 )
+          showMessage( 'error', 'You don\'t have permission to delete this blogs', 5000 )
         } else if (err.response.status && err.response.status === 401){
           showMessage( 'error', `${ err.response.data.error}`, 5000 )
-        } 
-      } 
+        }
+      }
       else if (err.request) {
         showMessage('error', 'Connection to server lost', 5000 )
       } else {
@@ -98,56 +96,56 @@ const App = (props) => {
   }
 
   const getBlogs = async  () => {
-      try {
-        const blogs = await blogService.getAll()
-        if (blogs) {
-          setBlogs( blogs )
+    try {
+      const blogs = await blogService.getAll()
+      if (blogs) {
+        setBlogs( blogs )
+      }
+    } catch ( err ) {
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // Object not found checck status code
+        if ( err.response.status && err.response.status === 404){
+          showMessage('error', 'Can not get blogs from server', 5000 )
         }
-      } catch ( err ) {
-        if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          // Object not found checck status code 
-          if ( err.response.status && err.response.status === 404){
-            showMessage('error', 'Can not get blogs from server', 5000 )
-          }   
-          else {
-            console.log('Error', err)
-            showMessage('error', 'Something went wrong', 5000 )
-          }
-        } else if (err.request) {
-          showMessage('error', 'Connection to server lost', 5000 )
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          showMessage('error', 'Wrong request setting', 5000)
+        else {
+          console.log('Error', err)
+          showMessage('error', 'Something went wrong', 5000 )
         }
+      } else if (err.request) {
+        showMessage('error', 'Connection to server lost', 5000 )
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        showMessage('error', 'Wrong request setting', 5000)
       }
     }
-    const handleAddLike = async ( blog) => {
+  }
+  const handleAddLike = async ( blog) => {
     try {
       const blogAddLike = {
-        ...blog, likes : blog.likes + 1 || 1
+        ... blog, likes : (blog.likes + 1)||1
       }
-      await blogService.addLike( blogAddLike, blog.id) 
+      await blogService.addLike( blogAddLike, blog.id )
       getBlogs()
-    }catch ( err ){
+    } catch ( err ){
       if (err.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          // Object not found checck status code 
-          if ( err.response.status && err.response.status === 404){
-            showMessage('error', 'Can not updaet blog', 5000 )
-          }   
-          else {
-            console.log('Error', err)
-            showMessage('error', 'Something went wrong', 5000 )
-          }
-        } else if (err.request) {
-          showMessage('error', 'Connection to server lost', 5000 )
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          showMessage('error', 'Wrong request setting', 5000)
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        // Object not found checck status code
+        if ( err.response.status && err.response.status === 404){
+          showMessage('error', 'Can not updaet blog', 5000 )
         }
+        else {
+          console.log('Error', err )
+          showMessage('error', 'Something went wrong', 5000 )
+        }
+      } else if (err.request) {
+        showMessage('error', 'Connection to server lost', 5000 )
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        showMessage('error', 'Wrong request setting', 5000)
+      }
     }
   }
 
@@ -162,21 +160,21 @@ const App = (props) => {
       )
       blogService.setToken( user.token)
       setUser( user )
-      setUsername('') 
+      setUsername('')
       setPassword('')
-      showMessage('successful', 'You have been successfuly loged in', 5000 )  
+      showMessage('successful', 'You have been successfuly loged in', 5000 )
     } catch ( err ){
-      // handle Login error 
+      // handle Login error
       if (err.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        // Object not found chech status code 
-      if ( err.response.status){
+        // Object not found chech status code
+        if ( err.response.status){
           if (err.response.status === 400){
             showMessage( 'error', `${ err.response.data.error}`, 5000 )
           } else if ( err.response.status === 401) {
             showMessage( 'error', `${ err.response.data.error}`, 5000 )
-          } 
+          }
           else {
             showMessage('error', `Something went wrong ${ err.response.status}`, 5000 )
           }
@@ -195,39 +193,35 @@ const App = (props) => {
     window.localStorage.clear()
     blogService.setToken( null )
     setUser( null )
-    setUsername('') 
+    setUsername('')
     setPassword('')
     showMessage('successful', 'You have been successfuly loged out', 5000 )
   }
-
-  
-
   const handleAddBlog = async ( event ) => {
     event.preventDefault()
     blogFormRef.current.toggleVisibility()
     try {
-      const blog = await blogService.createBlog( { 
+      await blogService.createBlog({
         title, url, author
       })
       setUrl('')
       setTitle('')
       getBlogs()
       showMessage('successful', 'New blog added', 5000 )
-      
     } catch ( err ){
-      // handle add blog error 
+      // handle add blog error
       if (err.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        // Object not found chech status code 
-      if ( err.response.status){
+        // Object not found chech status code
+        if ( err.response.status){
           if (err.response.status === 400){
             showMessage( 'error', `${ err.response.data.error}`, 5000 )
           } else if ( err.response.status === 401) {
             showMessage( 'error', `${ err.response.data.error}`, 5000 )
-          } 
+          }
           else {
-            console.log('Error', err)
+            console.log('Error', err )
             showMessage('error', `Something went wrong ${ err.response.status}`, 5000 )
           }
         }
@@ -243,46 +237,44 @@ const App = (props) => {
   return (
     <div>
       <Notification notification = { notificationMessage}/>
-      { 
-        user === null 
+      {
+        user === null
           ? <LoginForm
-              password={password}
-              username={username}
-              setUsername={setUsername}
-              setPassword={setPassword}
-              handleLogin={ handleLogin}
-            />
+            password={password}
+            username={username}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            handleLogin={ handleLogin}
+          />
           : <div>
-            
-              <h1>BLOGS</h1>
-              <p>{ user.name } is logged in</p>
-              <button onClick = { handleLogOut }>Log out</button>
-              <FilterBlog 
-                sortByLike = { sortByLike }
-                setSortByLike={ setSortByLike }
-                getSortedBlogs={ getSortedBlogs }
+            <h1>BLOGS</h1>
+            <p>{ user.name } is logged in</p>
+            <button onClick = { handleLogOut }>Log out</button>
+            <FilterBlog
+              sortByLike = { sortByLike }
+              setSortByLike={ setSortByLike }
+              getSortedBlogs={ getSortedBlogs }
+            />
+            <Togglable buttonLabel={'new note'} ref={blogFormRef}>
+              <BlogForm
+                handleAddBlog = { handleAddBlog }
+                title = { title }
+                author = { author }
+                url= { url }
+                setTitle = { setTitle }
+                setUrl = { setUrl }
               />
-              
-              <Togglable buttonLabel={'new note'} ref={blogFormRef}>
-                <BlogForm 
-                  handleAddBlog = { handleAddBlog } 
-                  title = { title }
-                  author = { author } 
-                  url= { url } 
-                  setTitle = { setTitle } 
-                  setUrl = { setUrl }
-                /> 
-              </Togglable>
-              <BlogList
-                  blogs={ blogs}
-                  handleAddLike={ handleAddLike }
-                  handleRemoveBlog={ handleRemoveBlog}
-                  user={user}
-              />
+            </Togglable>
+            <BlogList
+              blogs={ blogs }
+              handleAddLike={ handleAddLike }
+              handleRemoveBlog={ handleRemoveBlog }
+              user={ user }
+            />
           </div>
       }
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

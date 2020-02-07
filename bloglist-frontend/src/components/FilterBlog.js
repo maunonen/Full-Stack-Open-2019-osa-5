@@ -6,17 +6,16 @@ const FilterBlog = ({ sortByLike, setSortByLike, getSortedBlogs }) => {
     event.preventDefault()
     setSortByLike( !sortByLike )
     getSortedBlogs()
-    
   }
   return (
     <div>
-      <button onClick={ handleLikeSort } > {  sortByLike ? 
-                                              'sort by Like Asceding' : 
-                                              'sort by Like Desceding' }
+      <button onClick={ handleLikeSort } > {  sortByLike ?
+        'sort by Like Asceding' :
+        'sort by Like Desceding' }
       </button>
       <button>some other sort</button>
     </div>
-  )   
+  )
 }
 
 export default FilterBlog
